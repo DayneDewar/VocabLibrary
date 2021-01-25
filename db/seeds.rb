@@ -1,72 +1,55 @@
 # THIS SEED FILE NEEDS TO BE ENTIRELY REPLACED -- I'M LEAVING CODE FOR YOUR REFERENCE ONLY!
 
-Plant.destroy_all
-Person.destroy_all
-PlantParenthood.destroy_all
-Plant.reset_pk_sequence
-Person.reset_pk_sequence
-PlantParenthood.reset_pk_sequence
+User.destroy_all
+User.reset_pk_sequence
+Word.destroy_all
+Word.reset_pk_sequence
+VocabList.destroy_all
+VocabList.reset_pk_sequence
+UserList.destroy_all
+UserList.reset_pk_sequence
+SimilarWord.destroy_all
+SimilarWord.reset_pk_sequence
+OppositeWord.destroy_all
+OppositeWord.reset_pk_sequence
+WordListRelation.destroy_all
+WordListRelation.reset_pk_sequence
 
 ########### different ways to write your seeds ############
 
-# 1: save everything to variables (makes it easy to connect models, best for when you want to be intentional about your seeds)
-basil = Plant.create(name: "basil the herb", bought: 20200610, color: "green")
-sylwia = Person.create(name: "Sylwia", free_time: "none", age: 30)
-pp1 = PlantParenthood.create(plant_id: basil.id, person_id: sylwia.id, affection: 1_000_000, favorite?: true)
+gabe = User.create(name:'gabriel d', username: 'gabed', password: '123456')
+dayne = User.create(name: 'dayne d', username: 'dayned', password: '654321' )
 
-# 2. Mass create -- in order to connect them later IN SEEDS (not through the app) you'll need to find their id
-## a. by passing an array of hashes:
-Plant.create([
-    {name: "Corn Tree", bought: 20170203, color: "green"},
-    {name: "Prayer plant", bought: 20190815, color: "purple"},
-    {name: "Cactus", bought: 20200110, color: "ugly green"}
-])
-## b. by interating over an array of hashes:
-plants = [{name: "Elephant bush", bought: 20180908, color: "green"},
-    {name: "Photos", bought: 20170910, color: "green"},
-    {name: "Dragon tree", bought: 20170910, color: "green"},
-    {name: "Snake plant", bought: 20170910, color: "dark green"},
-    {name: "polka dot plant", bought: 20170915, color: "pink and green"},
-    {name: "Cactus", bought: 20200517, color: "green"}]
+happy= Word.create(word: 'happy', definition: 'to be happy')
+glad = Word.create(word: 'glad', definition: 'to be glad')
+sad = Word.create(word: 'sad', definition: 'to be sad')
+upset = Word.create(word: 'upset', definition: 'to be upset')
 
-plants.each{|hash| Plant.create(hash)}
+happylist = VocabList.create(name: 'happy list')
+sadlist = VocabList.create(name: 'sad list')
 
-# 3. Use Faker and mass create
-## step 1: write a method that creates a person
-def create_person
-    free = ["mornings", "evenings", "always", "afternoons", "weekends", "none"].sample
+happy_happy = WordListRelation.create(vocab_list_id: 1, word_id: 1, user_id: 1)
+happy_glad = WordListRelation.create(vocab_list_id: 1, word_id: 2, user_id: 1)
+sad_sad = WordListRelation.create(vocab_list_id: 2, word_id: 3, user_id: 2)
+sad_upset = WordListRelation.create(vocab_list_id: 2, word_id: 4, user_id: 2)
 
-    person = Person.create(
-        name: Faker::Movies::HitchhikersGuideToTheGalaxy.character,
-        free_time: free,
-        age: rand(11...70)
-    )
-end
 
-## step 2: write a method that creates a joiner
-def create_joiners(person)
-    plants_number = rand(1..4)
-    plants_number.times do 
-        PlantParenthood.create(
-            plant_id: Plant.all.sample.id, 
-            person_id: person.id, 
-            affection: rand(101), 
-            favorite?: [true, false].sample
-        )
-    end
-end
+gabesvocab = UserList.create(user_id: 1, vocab_list_id: 1)
+daynesvocab = UserList.create(user_id: 2, vocab_list_id: 2)
 
-## step 3: invoke creating joiners by passing in an instance of a person
-10.times do     
-    create_joiners(create_person)
-    ##### ALTERNATIVE:
-    # person = create_person
-    # create_joiners(person)
-end
+happyglad = SimilarWord.create(word_id: 1, synonym_id: 2)
+gladhappy = SimilarWord.create(word_id: 2, synonym_id: 1)
+sadupset = SimilarWord.create(word_id: 3, synonym_id: 4)
+upsetsad = SimilarWord.create(word_id: 4, synonym_id: 3)
 
-indoor = Category.create(name: "indoors")
-
-Plant.update(category_id: indoor.id)
+happysad = OppositeWord.create(word_id: 1, antonym_id: 3)
+happyupset = OppositeWord.create(word_id: 1, antonym_id: 4)
+gladsad = OppositeWord.create(word_id: 2, antonym_id: 3)
+gladupset = OppositeWord.create(word_id: 2, antonym_id: 4)
+sadhappy = OppositeWord.create(word_id: 3, antonym_id: 1)
+sadglad = OppositeWord.create(word_id: 3, antonym_id: 2)
+upsethappy = OppositeWord.create(word_id: 4, antonym_id: 1)
+upsetglad = OppositeWord.create(word_id: 4, antonym_id: 2)
 
 
 puts "🔥 🔥 🔥 🔥 "
