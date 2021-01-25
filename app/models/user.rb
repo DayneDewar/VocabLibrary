@@ -1,3 +1,6 @@
 class User < ActiveRecord::Base
-# add associatons!
+
+    has_many :userlists
+    has_many :vocablists, through: :userlists
+    has_many :wordlistrelations
 end

@@ -1,3 +1,7 @@
 class VocabList < ActiveRecord::Base
-  # add associatons!
+  
+  has_many :userlists
+  has_many :users, through: :userlists
+  has_many :wordlistrelations
+  has_many :words, through: :wordlistrelations
 end
