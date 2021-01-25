@@ -1,3 +1,3 @@
-class UserList< ActiveRecord::Base
+class UserList < ActiveRecord::Base
     
 end
