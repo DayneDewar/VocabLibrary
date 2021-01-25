@@ -24,7 +24,7 @@ ActiveRecord::Schema.define(version: 2021_01_25_194144) do
 
   create_table "user_lists", force: :cascade do |t|
     t.integer "user_id"
-    t.integer "vocablist_id"
+    t.integer "vocab_list_id"
   end
 
   create_table "users", force: :cascade do |t|
@@ -39,7 +39,7 @@ ActiveRecord::Schema.define(version: 2021_01_25_194144) do
   end
 
   create_table "word_list_relations", force: :cascade do |t|
-    t.integer "vocablist_id"
+    t.integer "vocab_list_id"
     t.integer "word_id"
     t.integer "user_id"
   end
