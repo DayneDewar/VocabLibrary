@@ -11,3 +11,4 @@ gem "faker"
 gem 'activerecord-reset-pk-sequence'
 
 gem "colorize"
+gem "audio-playback"

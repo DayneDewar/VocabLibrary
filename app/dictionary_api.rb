@@ -15,15 +15,35 @@ class GetRequester
     end
 
     def name
-        
+        json_parse[0]["meta"]["id"]
     end
 
+    def find_audio
+        audio = json_parse[0]["hwi"]["prs"][0]["sound"]["audio"]
+        audio
+    end
+
+    def numeric?(string)
+        string =~ /[0-9]/
+    end
+
+    def find_audio_type
+        #finds if audio value is a number or letter"
+        if numeric?(self.find_audio[0])
+            type = "number"
+        else
+            type = self.find_audio[0]
+        end
+        type
+    end
+
+
     def sound
-       
+        "afplay https://media.merriam-webster.com/audio/prons/en/us/wav/#{find_audio_type}/#{find_audio}.wav"
     end
 
     def definition
-        
+        json_parse[0]["def"][0]["sseq"][0][0][1]["dt"][0][1]
     end
 
     def json_parse
