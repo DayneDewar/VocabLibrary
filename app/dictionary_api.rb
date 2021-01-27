@@ -1,6 +1,7 @@
 require 'net/http'
 require 'open-uri'
 require 'json'
+require 'fileutils'
 
 class GetRequester
    
@@ -39,7 +40,9 @@ class GetRequester
 
 
     def sound
-        "afplay https://media.merriam-webster.com/audio/prons/en/us/wav/#{find_audio_type}/#{find_audio}.wav"
+        File.write "#{@word}.wav", open("https://media.merriam-webster.com/audio/prons/en/us/wav/#{find_audio_type}/#{find_audio}.wav").read
+        FileUtils.mv("#{@word}.wav", "./audio_files/#{@word}.wav")
+        pid = fork{ exec 'afplay', "./audio_files/#{@word}.wav" }
     end
 
     def definition
