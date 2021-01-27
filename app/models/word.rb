@@ -10,6 +10,10 @@ class Word < ActiveRecord::Base
     has_many :antonyms, :through => :opposite_words
     has_many :inverse_opposite_words, :class_name => "OppositeWord", :foreign_key => "antonym_id"
     has_many :inverse_antonyms, :through => :inverse_opposite_words, :source => :word
+
+    def to_s
+        self.word
+    end
 end
 
 
