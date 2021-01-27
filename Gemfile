@@ -14,3 +14,4 @@ gem 'activerecord-reset-pk-sequence'
 
 
 gem "colorize"
+gem "rest-client", "~> 2.1"

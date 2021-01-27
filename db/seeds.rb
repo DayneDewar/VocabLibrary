@@ -20,11 +20,6 @@ WordListRelation.reset_pk_sequence
 gabe = User.create(name:'gabriel d', username: 'gabed', password: '123456')
 dayne = User.create(name: 'dayne d', username: 'dayned', password: '654321' )
 
-happy= Word.create(word: 'happy', definition: 'to be happy')
-glad = Word.create(word: 'glad', definition: 'to be glad')
-sad = Word.create(word: 'sad', definition: 'to be sad')
-upset = Word.create(word: 'upset', definition: 'to be upset')
-
 happylist = VocabList.create(name: 'happy list')
 sadlist = VocabList.create(name: 'sad list')
 
