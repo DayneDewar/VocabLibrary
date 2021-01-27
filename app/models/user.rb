@@ -1,3 +1,4 @@
+
 class User < ActiveRecord::Base
 
     has_many :user_lists
@@ -52,11 +53,7 @@ class User < ActiveRecord::Base
     def add_new_to_vocablist(word, definition, list)
         new_word = Word.create(word: word, definition: definition)
         add_existing_to_vocablist(new_word, list)
-        puts "#{word} has been added to #{list}. Thank you for your contribution!"
-        sleep(1.5)
     end
 
-
-
-
+    
 end
