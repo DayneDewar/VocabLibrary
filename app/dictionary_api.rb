@@ -29,7 +29,6 @@ class GetRequester
     end
 
     def find_audio_type
-        #finds if audio value is a number or letter"
         if numeric?(self.find_audio[0])
             type = "number"
         else
