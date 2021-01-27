@@ -23,6 +23,11 @@ dayne = User.create(name: 'dayne d', username: 'dayned', password: '654321' )
 happylist = VocabList.create(name: 'happy list')
 sadlist = VocabList.create(name: 'sad list')
 
+happy = Word.create(word: 'happy', definition: 'to be happy')
+glad = Word.create(word: 'glad', definition: 'to be glad')
+sad = Word.create(word: 'sad', definition: 'to be sad')
+upset = Word.create(word: 'upset', definition: 'to be upset')
+
 happy_happy = WordListRelation.create(vocab_list_id: 1, word_id: 1, user_id: 1)
 happy_glad = WordListRelation.create(vocab_list_id: 1, word_id: 2, user_id: 1)
 sad_sad = WordListRelation.create(vocab_list_id: 2, word_id: 3, user_id: 2)
