@@ -158,6 +158,9 @@ class VocabLibrary
 
   def create_new_vocablist
     name = prompt.ask("Please enter a name for the VocabList"){|q| q.modify :down}
+    while !name
+      name = prompt.ask("Please enter a name for the VocabList"){|q| q.modify :down}
+    end
     user.user_create_new_vocablist(name);sleep(2)
     user.reload
     system 'reload'
