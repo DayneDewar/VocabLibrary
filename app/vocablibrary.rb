@@ -269,12 +269,15 @@ class VocabLibrary
 
   def browse_words
     system 'clear'
-    all_words = Word.all.sort_by{|word| word[:word]}
+    if all_words = Word.all.sort_by{|word| word[:word]} if Word.all 
     prompt.select("Choose or Enter a word you want to see.\nType 'MAIN MENU' to RETURN to the MAIN MENU.", filter: true) do |menu|
       all_words.each{|word| menu.choice "#{word}", -> { show_word(word, all_words, {disabled: " "})}}
       menu.choice "ADD Word into Database", -> {add_word_to_data_base}
       menu.choice "MAIN MENU", -> {main_menu}
     end
+    else
+      puts "No words in database yet!";sleep(2)
+      main_menu
   end
 
   def show_word(word, list, hash = {} )
