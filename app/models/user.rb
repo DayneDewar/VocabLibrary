@@ -60,7 +60,7 @@ class User < ActiveRecord::Base
         antonyms = Thesaurus.new(word.word).antonyms
         if antonyms.length > 0
             antonyms.each do |antonym| 
-                if synonym.include? " "
+                if antonym.include? " "
                     next
                 else
                     add_word_to_db(antonym)

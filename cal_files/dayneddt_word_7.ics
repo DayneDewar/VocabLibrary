@@ -1,0 +1,13 @@
+BEGIN:VCALENDAR
+VERSION:2.0
+PRODID:icalendar-ruby
+CALSCALE:GREGORIAN
+METHOD:PUBLISH
+BEGIN:VEVENT
+DTSTAMP:20210128T205035Z
+UID:0d9c0606-9ffb-4710-a4fd-8d88ec149907
+DTSTART:20210204T000000
+SUMMARY:Todays Word of the Day is: cup - a small bowl-shaped container for 
+ drinking from\, typically having a handle.
+END:VEVENT
+END:VCALENDAR
