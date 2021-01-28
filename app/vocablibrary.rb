@@ -268,6 +268,8 @@ class VocabLibrary
   #BROWSE
 
   def browse_words
+    system 'reload'
+    user.reload
     system 'clear'
       all_words = Word.all.sort_by{|word| word[:word]} 
       if Word.all != nil
@@ -306,6 +308,7 @@ class VocabLibrary
   def show_synonyms(word, list)
     system 'reload'
     user.reload
+    word.reload
     puts "#{word} Synonyms"
     synonyms = word.synonyms 
     if synonyms.length == 0
@@ -327,6 +330,7 @@ class VocabLibrary
   def show_antonyms(word, list)
     system 'reload'
     user.reload
+    word.reload
     puts "#{word} Antonyms"
     antonyms = word.antonyms 
     if antonyms.length == 0

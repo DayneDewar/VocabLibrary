@@ -43,8 +43,8 @@ class User < ActiveRecord::Base
                     add_word_to_db(synonym)
                     system 'reload'
                     SimilarWord.create(synonym_id: Word.last.id, word_id: word.id)
-                    system 'reload'
-                    self.reload
+                    # system 'reload'
+                    # self.reload
                 end
             end
             system 'reload'
@@ -52,6 +52,8 @@ class User < ActiveRecord::Base
         else
             puts "No synonyms found at this time";sleep(2)
         end
+        system 'reload'
+        self.reload
     end
 
     def add_antonyms(word)
@@ -73,6 +75,8 @@ class User < ActiveRecord::Base
         else
             puts "No anotnyms found at this time"; sleep(2)
         end
+        system 'reload'
+        self.reload
     end
 
 
