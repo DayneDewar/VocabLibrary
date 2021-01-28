@@ -132,7 +132,13 @@ class User < ActiveRecord::Base
     end
 
     def play_sound(word)
-        pid = fork{ exec 'afplay', "./audio_files/#{word}.wav" }
+        begin
+            pid = fork{ exec 'afplay', "./audio_files/#{word}.wav" }
+        rescue
+            puts "No available audio"
+        else
+            return
+        end
     end
 
     def add_word_of_the_day(num_days)

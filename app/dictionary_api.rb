@@ -44,8 +44,13 @@ class Dictionary
     end
 
     def find_audio
-        audio = json_parse_audio[0]["hwi"]["prs"][0]["sound"]["audio"]
-        audio
+        begin
+            audio = json_parse_audio[0]["hwi"]["prs"][0]["sound"]["audio"]
+        rescue
+            return nil
+        else
+            return audio
+        end
     end
 
     def numeric?(string)
@@ -63,9 +68,15 @@ class Dictionary
 
     def sound
         if !File.exist?("#{@word}.wav")
-            File.write "#{@word}.wav", open("https://media.merriam-webster.com/audio/prons/en/us/wav/#{find_audio_type}/#{find_audio}.wav").read
-            FileUtils.mv("#{@word}.wav", "./audio_files/#{@word}.wav")
-            #pid = fork{ exec 'afplay', "./audio_files/#{@word}.wav" }
+            begin
+                File.write "#{@word}.wav", open("https://media.merriam-webster.com/audio/prons/en/us/wav/#{find_audio_type}/#{find_audio}.wav").read
+                FileUtils.mv("#{@word}.wav", "./audio_files/#{@word}.wav") 
+                #pid = fork{ exec 'afplay', "./audio_files/#{@word}.wav" }
+            rescue
+                return nil
+            else 
+                return
+            end
         end
     end
 
