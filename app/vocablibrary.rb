@@ -116,15 +116,23 @@ class VocabLibrary
   end
 
   def show_study_word(word, list)
+    system 'reload'
+    user.reload
     system 'clear'
     puts word
     puts "Definition: #{word.definition}"
     puts "\n\n"
-    prompt.select("") do |menu| 
-      menu.choice "Synonyms", -> { view_study_synonyms(word)}
-      menu.choice "Antonyms", -> { view_study_antonyms(word)}
+    prompt.select("") do |menu|
+      menu.choice "Pronunciation", -> { study_pronunciation(word, list)} 
+      menu.choice "Synonyms", -> { view_study_synonyms(word, list)}
+      menu.choice "Antonyms", -> { view_study_antonyms(word, list)}
       menu.choice "RETURN", -> { show_study_vocablist(VocabList.find(list.id))}
     end
+  end
+
+  def study_pronunciation(word, list)
+    user.play_sound(word.word)
+    show_study_word(word, list)
   end
 
   def remove_list_from_profile(list_id)
@@ -160,42 +168,54 @@ class VocabLibrary
     word = prompt.ask("Please enter a word to ADD to #{list}")
     if newword = list.words.find {|words| words[:word]== word}
       puts "#{list} already has #{newword}"; sleep(2)
-      my_vocablists
+      show_study_vocablist(list)
     elsif newword = Word.find_by(word: word)
       user.add_existing_to_vocablist(newword, list)
       user.reload
       system 'reload'
-      my_vocablists
+      show_study_vocablist(list)
     else
-      user.add_word_to_db(word)
+      added_word = user.add_word_to_db(word)
+      if added_word
+        definition = prompt.ask("Please enter a definition for #{word}") 
+        user.add_made_up_word(word, definition)
+      end
       system 'reload'
       user.add_new_to_vocablist(list)
       user.reload
       system 'reload'
-      my_vocablists
+      show_study_vocablist(list)
     end
   end
 
-  def view_study_synonyms(word)
+  def view_study_synonyms(word, list)
     puts "#{word} Synonyms"
-    synonyms = word.synonyms
+    synonyms = word.synonyms 
     if synonyms.length == 0
-      system 'clear'
-      puts "Pending synonym Approval"; sleep(2)
-      my_vocablists
+      yes = prompt.yes?('Would you like to find synonyms?')
+      if yes 
+        user.add_synonyms(word)
+        show_study_word(word, list)
+      else
+        show_study_word(word, list)
+      end
     else
       synonyms.each{|synonym| puts synonym}
       prompt.select(""){|menu| menu.choice "RETURN to VocabList", -> { my_vocablists} }
     end
   end
 
-  def view_study_antonyms(word)
+  def view_study_antonyms(word,list)
     puts "#{word} Antonyms"
-    antonyms = word.antonyms
+    antonyms = word.antonyms 
     if antonyms.length == 0
-      system 'clear'
-      puts "Pending antonym Approval"; sleep(2)
-      my_vocablists
+      yes = prompt.yes?('Would you like to find antonyms?')
+      if yes 
+        user.add_antonyms(word)
+        show_study_word(word, list)
+      else
+        show_study_word(word, list)
+      end
     else
       antonyms.each{|antonym| puts antonym}
       prompt.select(""){|menu| menu.choice "RETURN to VocabList", -> { my_vocablists} }
@@ -258,37 +278,62 @@ class VocabLibrary
   end
 
   def show_word(word, list, hash = {} )
+    system 'reload'
+    user.reload
     system 'clear'
     puts word
     puts "Definition: #{word.definition}"
     puts "\n\n"
     prompt.select("") do |menu|
-      menu.choice "Synonyms", -> {show_synonyms(word)}
-      menu.choice "Antonyms", -> {show_antonyms(word)}
+      menu.choice "Pronunciation", -> {pronunciation(word, list)}
+      menu.choice "Synonyms", -> {show_synonyms(word, list)}
+      menu.choice "Antonyms", -> {show_antonyms(word, list)}
       menu.choice "RETURN to VocabList", -> { show_vocablist(list)}, hash
       menu.choice "BROWSE WORDS", -> { browse_words}
     end
   end
+
+  def pronunciation(word, list)
+    user.play_sound(word.word)
+    show_word(word, list, {disabled: " "})
+  end
   
-  def show_synonyms(word)
+  def show_synonyms(word, list)
+    system 'reload'
+    user.reload
     puts "#{word} Synonyms"
-    synonyms = word.synonyms
+    synonyms = word.synonyms 
     if synonyms.length == 0
-      system 'clear'
-      puts "Pending synonym Approval"; sleep(2)
-      browse_words
+      yes = prompt.yes?('Would you like to find synonyms?')
+      if yes 
+        user.add_synonyms(word)
+        system 'reload'
+        user.reload
+        show_word(word, list, {disabled: " "})
+      else
+        show_word(word, list, {disabled: " "})
+      end
     else
       synonyms.each{|synonym| puts synonym}
       prompt.select(""){|menu| menu.choice "RETURN to BROWSE WORDS", -> { browse_words} }
     end
   end
-  def show_antonyms(word)
+
+  def show_antonyms(word, list)
+    system 'reload'
+    user.reload
     puts "#{word} Antonyms"
-    antonyms = word.antonyms
+    antonyms = word.antonyms 
     if antonyms.length == 0
-      system 'clear'
-      puts "Pending antonym Approval"; sleep(2)
-      browse_words
+      yes = prompt.yes?('Would you like to find antonyms?')
+      if yes 
+        user.add_antonyms(word)
+        system 'reload'
+        user.reload
+        show_word(word, list, {disabled: " "})
+      else
+        show_word(word, list, {disabled: " "})
+      end
     else
       antonyms.each{|antonym| puts antonym}
       prompt.select(""){|menu| menu.choice "RETURN to BROWSE WORDS", -> { browse_words} }
@@ -305,28 +350,14 @@ class VocabLibrary
     end
     system 'reload'
     user.reload
-    # word = prompt.ask("Please Enter Your Word"){|q| q.modify :down}
-    # while !word
-    #   puts "No word was added"; sleep(1.5)
-    #   browse_words
-    # end
-    # if Word.find_by_word(word)
-    #   puts "This word Already exists"; sleep(1)
-    #   browse_words
-    # else
-    #   definition = prompt.ask("Please Enter the Deffinition of #{word}"){|q| q.modify :down}
-    #   while !definition
-    #     definition = prompt.ask("Please Enter the Deffinition of #{word}"){|q| q.modify :down}
-    #   end
-    #   Word.create(word: word, definition: definition)
-    # end
-    # puts "#{word.capitalize if word} has been added to our database. Thank you for you contribution!"; sleep(2)
     browse_words
   end
 
 
 
   def browse_vocablists
+    system 'reload'
+    user.reload
     system 'clear'
     all_vocablists = VocabList.all.sort_by{|list| list[:name]}
     prompt.select("Choose or Enter a Vocablist you want to see.\nType 'MAIN MENU' to RETURN to the MAIN MENU.", filter: true) do |menu|
@@ -341,7 +372,7 @@ class VocabLibrary
     words = list.words
     prompt.select("Choose a word you want to study or type 'RETURN'", filter: true) do |menu|
       menu.choice "ADD to Profile", -> { add_list_to_profile(list.id)}
-      words.each{|word| menu.choice "#{word}", -> { show_word(word, list,)}}
+      words.each{|word| menu.choice "#{word}", -> { show_word(word, list)}}
       menu.choice "RETURN", -> { browse_vocablists}
     end
   end

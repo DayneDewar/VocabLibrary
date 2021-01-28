@@ -4,7 +4,7 @@ require 'json'
 require 'fileutils'
 require 'oxford_dictionary'
 
-class WordRequester
+class Dictionary
 
     def initialize(word)
         @word = word
@@ -36,7 +36,7 @@ class WordRequester
 
 
     def find_audio
-        audio = json_parse[0]["hwi"]["prs"][0]["sound"]["audio"]
+        audio = json_parse_audio[0]["hwi"]["prs"][0]["sound"]["audio"]
         audio
     end
 
@@ -55,9 +55,11 @@ class WordRequester
 
 
     def sound
-        File.write "#{@word}.wav", open("https://media.merriam-webster.com/audio/prons/en/us/wav/#{find_audio_type}/#{find_audio}.wav").read
-        FileUtils.mv("#{@word}.wav", "./audio_files/#{@word}.wav")
-        pid = fork{ exec 'afplay', "./audio_files/#{@word}.wav" }
+        if !File.exist?("#{@word}.wav")
+            File.write "#{@word}.wav", open("https://media.merriam-webster.com/audio/prons/en/us/wav/#{find_audio_type}/#{find_audio}.wav").read
+            FileUtils.mv("#{@word}.wav", "./audio_files/#{@word}.wav")
+            #pid = fork{ exec 'afplay', "./audio_files/#{@word}.wav" }
+        end
     end
 
 
@@ -65,6 +67,19 @@ class WordRequester
         program = JSON.parse(self.get_response_body)
         program
     end
+
+    def make_synonyms
+        #binding.pry
+        synonyms = Thesaurus.new(@word).synonyms
+    end
+
+    def make_antonyms
+        antonyms = Thesaurus.new(@word).antonyms
+    end
+
+
+
+
 
 
 

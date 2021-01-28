@@ -9,11 +9,23 @@ class Thesaurus
     end
 
     def synonyms
-        json_parse[0]["meta"]["syns"][0].first(3)
+        begin
+            synonyms = json_parse[0]["meta"]["syns"][0].first(3)
+        rescue
+            return []
+        else
+            return synonyms
+        end
     end
 
     def antonyms
-        json_parse[0]["meta"]["ants"][0].first(3)
+        begin
+            antonyms = json_parse[0]["meta"]["ants"][0].first(3)
+        rescue
+            return []
+        else
+            return antonyms
+        end
     end
 
     def get_response_body

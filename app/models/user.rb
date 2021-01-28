@@ -14,10 +14,10 @@ class User < ActiveRecord::Base
 
     def add_word_to_db(word)
         if new_word = Word.find_by(word: word)
-            puts "#{word} is already in our database"; sleep(1.5)
+            puts "#{word} is already in our database"; sleep(2)
             return nil
         else
-            new_word = WordRequester.new(word)
+            new_word = Dictionary.new(word)
             add_word = new_word.oxford_word
             if !add_word
                 add_word = word
@@ -25,6 +25,7 @@ class User < ActiveRecord::Base
                 return response
             else
                 definition = new_word.oxford_definition
+                new_word.sound
             end
             added_word = Word.create(word: word, definition: definition)
             puts "Thank You, #{added_word} has been added to our database"; sleep(1.5)
@@ -32,9 +33,53 @@ class User < ActiveRecord::Base
         end
     end
 
+    def add_synonyms(word)
+        synonyms = Thesaurus.new(word.word).synonyms
+        if synonyms.length > 0
+            synonyms.each do |synonym| 
+                if synonym.include? " "
+                    next
+                else
+                    add_word_to_db(synonym)
+                    system 'reload'
+                    SimilarWord.create(synonym_id: Word.last.id, word_id: word.id)
+                    system 'reload'
+                    self.reload
+                end
+            end
+            system 'reload'
+            self.reload
+        else
+            puts "No synonyms found at this time";sleep(2)
+        end
+    end
+
+    def add_antonyms(word)
+        antonyms = Thesaurus.new(word.word).antonyms
+        if antonyms.length > 0
+            antonyms.each do |antonym| 
+                if synonym.include? " "
+                    next
+                else
+                    add_word_to_db(antonym)
+                    system 'reload'
+                    OppositeWord.create(antonym_id: Word.last.id, word_id: word.id)
+                    system 'reload'
+                    self.reload
+                end
+            end
+            system 'reload'
+            self.reload
+        else
+            puts "No anotnyms found at this time"; sleep(2)
+        end
+    end
+
+
+
     def add_made_up_word(word, definition)
         new_word = Word.create(word: word, definition: definition)
-        puts "Thank You, #{word} has been added to our database"; sleep(1.5)
+        puts "Thank You, #{word} has been added to our database"; sleep(2)
     end
 
 
@@ -74,12 +119,16 @@ class User < ActiveRecord::Base
     def add_existing_to_vocablist(word, list)
         word_list_relation = WordListRelation.create(vocab_list_id: list.id, word_id: word.id, user_id: self.id)
         puts "#{word} has been added to #{list}. Thank you for your contribution!"
-        sleep(1.5)
+        sleep(2)
     end
 
     def add_new_to_vocablist(list)
         new_word = Word.last
         add_existing_to_vocablist(new_word, list)
+    end
+
+    def play_sound(word)
+        pid = fork{ exec 'afplay', "./audio_files/#{word}.wav" }
     end
 
     def add_word_of_the_day(num_days)
