@@ -16,7 +16,7 @@ class GetRequester
     end
 
     def name
-        json_parse[0]["meta"]["id"]
+        name = json_parse[0]["meta"]["id"].gsub!(/[^a-zA-Z]/, '')
     end
 
     def find_audio
@@ -45,10 +45,14 @@ class GetRequester
     end
 
     def definition
-        json_parse[0]["def"][0]["sseq"][0][0][1]["dt"][0][1]
+        deff = json_parse[0]["def"][0]["sseq"][0][0][1]["dt"][1][1][0]["t"]
+        deff.slice!("{wi}")
+        deff.slice!("{/wi}")
+        deff
     end
 
     def json_parse
+        binding.pry
         program = JSON.parse(self.get_response_body)
         program
     end

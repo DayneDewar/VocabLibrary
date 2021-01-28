@@ -77,6 +77,7 @@ class VocabLibrary
     puts "#{user.name.titleize}(#{user.username})\n\n"
     prompt.select("What would you like to see/do #{user.name.titleize}?") do |menu|
       menu.choice "My VocabLists", -> { my_vocablists}
+      menu.choice "Word of the Day", -> {word_of_the_day_subscription}
       menu.choice "My Contributions", -> { my_contributions}
       menu.choice "ADD New VocabList", -> { add_new_vocablist}
       menu.choice "MAIN MENU", -> { main_menu}
@@ -209,6 +210,20 @@ class VocabLibrary
     end
   end
     
+  def word_of_the_day_subscription
+    system 'clear'
+    yes = prompt.yes?('Would you like to recieve a Word of the Day for the next 7 days?')
+    if yes
+      user.add_word_of_the_day(7)
+      puts "You will recieve a Word of the Day for the next 7 days. Check your Calendar!"; sleep(2)
+      system 'reload'
+      user.reload
+      my_profile
+    else
+      my_profile
+    end
+  end
+
 
   def remove_word_from_list
     system 'clear'

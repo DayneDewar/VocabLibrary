@@ -1,4 +1,6 @@
-
+require 'active_support'
+require 'active_support/core_ext'
+require 'fileutils'
 class User < ActiveRecord::Base
 
     has_many :user_lists
@@ -54,5 +56,22 @@ class User < ActiveRecord::Base
         add_existing_to_vocablist(new_word, list)
     end
 
-    
+    def add_word_of_the_day(num_days)
+        num_days.times do |i|
+            word = Word.all.sample
+            deff = word.definition
+            cal = Icalendar::Calendar.new
+            event = Icalendar::Event.new
+            event.dtstart = Date.today + (i+1).days
+            event.summary = "Todays Word of the Day is: #{word} - #{deff}"
+            cal.add_event(event)
+            cal.publish
+            file = File.open("#{self.username}_word_#{i+1}.ics","w") do |f|
+                f.write(cal.to_ical)
+            FileUtils.mv("#{self.username}_word_#{i+1}.ics", "./cal_files/#{self.username}_word_#{i+1}.ics")
+            
+            system 'open', "./cal_files/#{self.username}_word_#{i+1}.ics"
+            end
+        end  
+    end    
 end
