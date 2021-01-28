@@ -12,6 +12,32 @@ class User < ActiveRecord::Base
         puts "Name: #{name.titleize}\t\tAge: #{age}\t\tUsername: #{username}"
     end
 
+    def add_word_to_db(word)
+        if new_word = Word.find_by(word: word)
+            puts "#{word} is already in our database"; sleep(1.5)
+            return nil
+        else
+            new_word = WordRequester.new(word)
+            add_word = new_word.oxford_word
+            if !add_word
+                add_word = word
+                response = "Please enter a definition for #{word}"
+                return response
+            else
+                definition = new_word.oxford_definition
+            end
+            added_word = Word.create(word: word, definition: definition)
+            puts "Thank You, #{added_word} has been added to our database"; sleep(1.5)
+            return nil
+        end
+    end
+
+    def add_made_up_word(word, definition)
+        new_word = Word.create(word: word, definition: definition)
+        puts "Thank You, #{word} has been added to our database"; sleep(1.5)
+    end
+
+
     def add_new_list_to_profile(list_id)
         new_list = UserList.find_by(user_id: self.id, vocab_list_id: list_id)
         if new_list
@@ -51,8 +77,8 @@ class User < ActiveRecord::Base
         sleep(1.5)
     end
 
-    def add_new_to_vocablist(word, definition, list)
-        new_word = Word.create(word: word, definition: definition)
+    def add_new_to_vocablist(list)
+        new_word = Word.last
         add_existing_to_vocablist(new_word, list)
     end
 

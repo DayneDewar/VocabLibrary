@@ -167,8 +167,9 @@ class VocabLibrary
       system 'reload'
       my_vocablists
     else
-      definition = prompt.ask("Please enter a definition for #{newword}")
-      user.add_new_to_vocablist(word, definition, list)
+      user.add_word_to_db(word)
+      system 'reload'
+      user.add_new_to_vocablist(list)
       user.reload
       system 'reload'
       my_vocablists
@@ -297,21 +298,29 @@ class VocabLibrary
   def add_word_to_data_base
     system 'clear'
     word = prompt.ask("Please Enter Your Word"){|q| q.modify :down}
-    while !word
-      puts "No word was added"; sleep(1.5)
-      browse_words
+    added_word = user.add_word_to_db(word)
+    if added_word
+      definition = prompt.ask("Please enter a definition for #{word}") 
+      user.add_made_up_word(word, definition)
     end
-    if Word.find_by_word(word)
-      puts "This word Already exists"; sleep(1)
-      browse_words
-    else
-      definition = prompt.ask("Please Enter the Deffinition of #{word}"){|q| q.modify :down}
-      while !definition
-        definition = prompt.ask("Please Enter the Deffinition of #{word}"){|q| q.modify :down}
-      end
-      Word.create(word: word, definition: definition)
-    end
-    puts "#{word.capitalize if word} has been added to our database. Thank you for you contribution!"; sleep(2)
+    system 'reload'
+    user.reload
+    # word = prompt.ask("Please Enter Your Word"){|q| q.modify :down}
+    # while !word
+    #   puts "No word was added"; sleep(1.5)
+    #   browse_words
+    # end
+    # if Word.find_by_word(word)
+    #   puts "This word Already exists"; sleep(1)
+    #   browse_words
+    # else
+    #   definition = prompt.ask("Please Enter the Deffinition of #{word}"){|q| q.modify :down}
+    #   while !definition
+    #     definition = prompt.ask("Please Enter the Deffinition of #{word}"){|q| q.modify :down}
+    #   end
+    #   Word.create(word: word, definition: definition)
+    # end
+    # puts "#{word.capitalize if word} has been added to our database. Thank you for you contribution!"; sleep(2)
     browse_words
   end
 
