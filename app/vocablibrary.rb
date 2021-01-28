@@ -348,10 +348,18 @@ class VocabLibrary
   def add_word_to_data_base
     system 'clear'
     word = prompt.ask("Please Enter Your Word"){|q| q.modify :down}
+    while word == ""
+      word = prompt.ask("Please Enter Your Word"){|q| q.modify :down}
+    end
+
     added_word = user.add_word_to_db(word)
     if added_word
       definition = prompt.ask("Please enter a definition for #{word}") 
-      user.add_made_up_word(word, definition)
+      while definition == ""
+        definition = prompt.ask("Please enter a definition for #{word}") 
+      else
+        user.add_made_up_word(word, definition)
+      end
     end
     system 'reload'
     user.reload
