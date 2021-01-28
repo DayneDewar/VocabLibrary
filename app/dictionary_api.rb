@@ -13,11 +13,24 @@ class Dictionary
     def get_oxford_body
         client = OxfordDictionary::Client.new(app_id: '51163151', app_key: 'a359822d89657ed4c907db3e4e5030a4')
         client = OxfordDictionary.new(app_id: '51163151', app_key: 'a359822d89657ed4c907db3e4e5030a4')
-        entry = client.entry(word: "#{@word}", dataset: 'en-gb', params: {})
+        begin 
+            entry = client.entry(word: "#{@word}", dataset: 'en-gb', params: {})
+        rescue
+            nil
+        else
+            entry = client.entry(word: "#{@word}", dataset: 'en-gb', params: {})
+        end
+
     end
 
     def oxford_word
-        get_oxford_body.word
+        begin
+            get_oxford_body.word
+        rescue
+            nil
+        else
+            get_oxford_body.word
+        end
     end
 
     def oxford_definition
