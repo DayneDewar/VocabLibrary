@@ -10,7 +10,10 @@ gem "sqlite3"
 gem "pry"
 gem "faker"
 gem 'activerecord-reset-pk-sequence'
+gem 'oxford_dictionary'
 
+gem 'icalendar'
+gem 'date'
 
 
 gem "colorize"

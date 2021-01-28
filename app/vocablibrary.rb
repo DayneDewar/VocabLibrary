@@ -77,6 +77,7 @@ class VocabLibrary
     puts "#{user.name.titleize}(#{user.username})\n\n"
     prompt.select("What would you like to see/do #{user.name.titleize}?") do |menu|
       menu.choice "My VocabLists", -> { my_vocablists}
+      menu.choice "Word of the Day", -> {word_of_the_day_subscription}
       menu.choice "My Contributions", -> { my_contributions}
       menu.choice "ADD New VocabList", -> { add_new_vocablist}
       menu.choice "MAIN MENU", -> { main_menu}
@@ -166,8 +167,9 @@ class VocabLibrary
       system 'reload'
       my_vocablists
     else
-      definition = prompt.ask("Please enter a definition for #{newword}")
-      user.add_new_to_vocablist(word, definition, list)
+      user.add_word_to_db(word)
+      system 'reload'
+      user.add_new_to_vocablist(list)
       user.reload
       system 'reload'
       my_vocablists
@@ -209,6 +211,20 @@ class VocabLibrary
     end
   end
     
+  def word_of_the_day_subscription
+    system 'clear'
+    yes = prompt.yes?('Would you like to recieve a Word of the Day for the next 7 days?')
+    if yes
+      user.add_word_of_the_day(7)
+      puts "You will recieve a Word of the Day for the next 7 days. Check your Calendar!"; sleep(2)
+      system 'reload'
+      user.reload
+      my_profile
+    else
+      my_profile
+    end
+  end
+
 
   def remove_word_from_list
     system 'clear'
@@ -282,21 +298,29 @@ class VocabLibrary
   def add_word_to_data_base
     system 'clear'
     word = prompt.ask("Please Enter Your Word"){|q| q.modify :down}
-    while !word
-      puts "No word was added"; sleep(1.5)
-      browse_words
+    added_word = user.add_word_to_db(word)
+    if added_word
+      definition = prompt.ask("Please enter a definition for #{word}") 
+      user.add_made_up_word(word, definition)
     end
-    if Word.find_by_word(word)
-      puts "This word Already exists"; sleep(1)
-      browse_words
-    else
-      definition = prompt.ask("Please Enter the Deffinition of #{word}"){|q| q.modify :down}
-      while !definition
-        definition = prompt.ask("Please Enter the Deffinition of #{word}"){|q| q.modify :down}
-      end
-      Word.create(word: word, definition: definition)
-    end
-    puts "#{word.capitalize if word} has been added to our database. Thank you for you contribution!"; sleep(2)
+    system 'reload'
+    user.reload
+    # word = prompt.ask("Please Enter Your Word"){|q| q.modify :down}
+    # while !word
+    #   puts "No word was added"; sleep(1.5)
+    #   browse_words
+    # end
+    # if Word.find_by_word(word)
+    #   puts "This word Already exists"; sleep(1)
+    #   browse_words
+    # else
+    #   definition = prompt.ask("Please Enter the Deffinition of #{word}"){|q| q.modify :down}
+    #   while !definition
+    #     definition = prompt.ask("Please Enter the Deffinition of #{word}"){|q| q.modify :down}
+    #   end
+    #   Word.create(word: word, definition: definition)
+    # end
+    # puts "#{word.capitalize if word} has been added to our database. Thank you for you contribution!"; sleep(2)
     browse_words
   end
 
