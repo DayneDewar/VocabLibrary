@@ -14,6 +14,7 @@ GEM
       minitest (~> 5.1)
       tzinfo (~> 1.1)
     arel (9.0.0)
+    artii (2.1.2)
     coderay (1.1.3)
     colorize (0.8.1)
     concurrent-ruby (1.1.8)
@@ -90,6 +91,7 @@ PLATFORMS
 DEPENDENCIES
   activerecord (~> 5.2)
   activerecord-reset-pk-sequence
+  artii
   colorize
   date
   faker

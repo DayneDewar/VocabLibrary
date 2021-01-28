@@ -1,7 +1,8 @@
+require 'colorized_string'
 class VocabLibrary
 
-  attr_reader :prompt
-  attr_accessor :user
+  attr_reader :prompt 
+  attr_accessor :user, :logo
 
 
   
@@ -15,12 +16,11 @@ class VocabLibrary
   end
 
   def startup
-      #something cool a banner maybe?
       welcome
   end
 
   def welcome
-      system 'clear'
+      clear
       prompt.select("SIGN IN or SIGN UP") do |menu|
           menu.choice "SIGN IN", -> {sign_in_helper}
           menu.choice "SIGN UP", -> {sign_up_helper}
@@ -60,7 +60,7 @@ class VocabLibrary
   end
 
   def main_menu
-      system 'clear'
+      clear
       system 'reload'
       prompt.select("MAIN MENU") do |menu|
           menu.choice "MY PROFILE", -> { my_profile}
@@ -72,7 +72,7 @@ class VocabLibrary
   end
 
   def my_profile
-    system 'clear'
+    clear
     system 'reload'
     puts "#{user.name.titleize}(#{user.username})\n\n"
     prompt.select("What would you like to see/do #{user.name.titleize}?") do |menu|
@@ -86,7 +86,7 @@ class VocabLibrary
   end
 
   def my_vocablists
-    system 'clear'
+    clear
     system 'reload'
     user.reload
     lists = self.user.vocab_lists
@@ -104,7 +104,7 @@ class VocabLibrary
   def show_study_vocablist(list)
     system 'reload'
     user.reload
-    system 'clear'
+    clear
     puts list
     words = list.words
     prompt.select("Choose a word you want to study or type 'RETURN'", filter: true) do |menu|
@@ -118,7 +118,7 @@ class VocabLibrary
   def show_study_word(word, list)
     system 'reload'
     user.reload
-    system 'clear'
+    clear
     puts word
     puts "Definition: #{word.definition}"
     puts "\n\n"
@@ -235,7 +235,7 @@ class VocabLibrary
   end
     
   def word_of_the_day_subscription
-    system 'clear'
+    clear
     yes = prompt.yes?('Would you like to recieve a Word of the Day for the next 7 days?')
     if yes
       user.add_word_of_the_day(7)
@@ -250,7 +250,7 @@ class VocabLibrary
 
 
   def remove_word_from_list
-    system 'clear'
+    clear
     contributions = user.word_list_relations
     prompt.select("Please choose which word/list pair to DELETE or Type 'RETURN to Profile") do |menu|
       contributions.each{|contribution| menu.choice "REMOVE #{Word.find(contribution.word_id)} from #{VocabList.find(contribution.vocab_list_id)}", -> {remove_word(contribution)}}
@@ -273,7 +273,7 @@ class VocabLibrary
   def browse_words
     system 'reload'
     user.reload
-    system 'clear'
+    clear
       all_words = Word.all.sort_by{|word| word[:word]} 
       if Word.all != nil
         prompt.select("Choose or Enter a word you want to see.\nType 'MAIN MENU' to RETURN to the MAIN MENU.", filter: true) do |menu|
@@ -290,7 +290,7 @@ class VocabLibrary
   def show_word(word, list, hash = {} )
     system 'reload'
     user.reload
-    system 'clear'
+    clear
     puts word
     puts "Definition: #{word.definition}"
     puts "\n\n"
@@ -353,7 +353,7 @@ class VocabLibrary
   end
 
   def add_word_to_data_base
-    system 'clear'
+    clear
     word = prompt.ask("Please Enter Your Word"){|q| q.modify :down}
     while !word
       word = prompt.ask("Please Enter Your Word"){|q| q.modify :down}
@@ -377,7 +377,7 @@ class VocabLibrary
   def browse_vocablists
     system 'reload'
     user.reload
-    system 'clear'
+    clear
     all_vocablists = VocabList.all.sort_by{|list| list[:name]}
     prompt.select("Choose or Enter a Vocablist you want to see.\nType 'MAIN MENU' to RETURN to the MAIN MENU.", filter: true) do |menu|
       all_vocablists.each{|list| menu.choice "#{list}", -> { show_vocablist(list)}}
@@ -386,7 +386,7 @@ class VocabLibrary
   end
 
   def show_vocablist(list)
-    system 'clear'
+    clear
     puts list
     words = list.words
     prompt.select("Choose a word you want to study or type 'RETURN'", filter: true) do |menu|
@@ -398,7 +398,7 @@ class VocabLibrary
 
 
   def account_helper
-    system 'clear'
+    clear
     user.user_info
     prompt.select("What would you like to do?") do |menu|
       menu.choice "UPDATE Name", -> {update_name_helper}
@@ -409,7 +409,7 @@ class VocabLibrary
   end
 
   def update_name_helper
-    system 'clear'
+    clear
     puts "Current Name: #{user.name.titleize}"
     new_name = prompt.ask("Please enter a new name", default: user.name.titleize){|q| q.modify :down}
     user.update(name: new_name)
@@ -418,7 +418,7 @@ class VocabLibrary
   end
 
   def update_age_helper
-    system 'clear'
+    clear
     puts "Current Age: #{user.age}"
     new_age = prompt.ask("Please enter your age", convert: :integer, default: user.age)
     user.update(age: new_age)
@@ -431,7 +431,7 @@ class VocabLibrary
     if value
       user.destroy
       system 'reload'
-      system 'clear'
+      clear
       welcome
     else
       account_helper
@@ -440,12 +440,43 @@ class VocabLibrary
 
 
   def exit_helper
-      system 'clear'
-      puts "good bye"; sleep (1)
-      exit
+      bye
   end
 
-  private
+
+  def display
+    logo = <<-'EOF'
+██╗░░░██╗░█████╗░░█████╗░░█████╗░██████╗░██╗░░░░░██╗██████╗░██████╗░░█████╗░██████╗░██╗░░░██╗
+██║░░░██║██╔══██╗██╔══██╗██╔══██╗██╔══██╗██║░░░░░██║██╔══██╗██╔══██╗██╔══██╗██╔══██╗╚██╗░██╔╝
+╚██╗░██╔╝██║░░██║██║░░╚═╝███████║██████╦╝██║░░░░░██║██████╦╝██████╔╝███████║██████╔╝░╚████╔╝░
+░╚████╔╝░██║░░██║██║░░██╗██╔══██║██╔══██╗██║░░░░░██║██╔══██╗██╔══██╗██╔══██║██╔══██╗░░╚██╔╝░░
+░░╚██╔╝░░╚█████╔╝╚█████╔╝██║░░██║██████╦╝███████╗██║██████╦╝██║░░██║██║░░██║██║░░██║░░░██║░░░
+░░░╚═╝░░░░╚════╝░░╚════╝░╚═╝░░╚═╝╚═════╝░╚══════╝╚═╝╚═════╝░╚═╝░░╚═╝╚═╝░░╚═╝╚═╝░░╚═╝░░░╚═╝░░░
+
+        EOF
+    puts logo.colorize(:color => :red, :background => :black)
+  end
+
+  def bye
+    system 'clear'
+    bye = <<-'EOF'
+░██████╗░░█████╗░░█████╗░██████╗░██████╗░██╗░░░██╗███████╗
+██╔════╝░██╔══██╗██╔══██╗██╔══██╗██╔══██╗╚██╗░██╔╝██╔════╝
+██║░░██╗░██║░░██║██║░░██║██║░░██║██████╦╝░╚████╔╝░█████╗░░
+██║░░╚██╗██║░░██║██║░░██║██║░░██║██╔══██╗░░╚██╔╝░░██╔══╝░░
+╚██████╔╝╚█████╔╝╚█████╔╝██████╔╝██████╦╝░░░██║░░░███████╗
+░╚═════╝░░╚════╝░░╚════╝░╚═════╝░╚═════╝░░░░╚═╝░░░╚══════╝
+
+    EOF
+    puts bye.colorize(:color => :red, :background => :black); sleep(3)
+    system 'clear' 
+  end
+
+
+  def clear
+    system 'clear'
+    display
+  end
 
   
 end

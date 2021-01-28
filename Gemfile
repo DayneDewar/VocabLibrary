@@ -15,6 +15,6 @@ gem 'oxford_dictionary'
 gem 'icalendar'
 gem 'date'
 
-
+gem 'artii'
 gem "colorize"
 gem "rest-client", "~> 2.1"
