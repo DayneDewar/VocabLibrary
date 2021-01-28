@@ -357,9 +357,8 @@ class VocabLibrary
       definition = prompt.ask("Please enter a definition for #{word}") 
       while definition == ""
         definition = prompt.ask("Please enter a definition for #{word}") 
-      else
-        user.add_made_up_word(word, definition)
       end
+      user.add_made_up_word(word, definition)
     end
     system 'reload'
     user.reload
