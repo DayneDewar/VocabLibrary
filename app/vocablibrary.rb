@@ -355,7 +355,7 @@ class VocabLibrary
     added_word = user.add_word_to_db(word)
     if added_word
       definition = prompt.ask("Please enter a definition for #{word}") 
-      while !definitino
+      while !definition
         definition = prompt.ask("Please enter a definition for #{word}") 
       end
       user.add_made_up_word(word, definition)
