@@ -174,8 +174,9 @@ class VocabLibrary
       show_study_vocablist(list)
     elsif newword = Word.find_by(word: word)
       user.add_existing_to_vocablist(newword, list)
-      user.reload
       system 'reload'
+      user.reload
+      list.reload
       show_study_vocablist(list)
     else
       added_word = user.add_word_to_db(word)
@@ -187,6 +188,7 @@ class VocabLibrary
       user.add_new_to_vocablist(list)
       user.reload
       system 'reload'
+      list.reload
       show_study_vocablist(list)
     end
   end

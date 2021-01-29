@@ -1,0 +1,14 @@
+BEGIN:VCALENDAR
+VERSION:2.0
+PRODID:icalendar-ruby
+CALSCALE:GREGORIAN
+METHOD:PUBLISH
+BEGIN:VEVENT
+DTSTAMP:20210128T235652Z
+UID:90900495-cd7f-40c2-97db-1af35582d48d
+DTSTART:20210204T000000
+SUMMARY:Todays Word of the Day is: congenial - (of a person) pleasing or li
+ ked on account of having qualities or interests that are similar to one's 
+ own
+END:VEVENT
+END:VCALENDAR

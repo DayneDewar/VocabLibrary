@@ -1,0 +1,13 @@
+BEGIN:VCALENDAR
+VERSION:2.0
+PRODID:icalendar-ruby
+CALSCALE:GREGORIAN
+METHOD:PUBLISH
+BEGIN:VEVENT
+DTSTAMP:20210128T235651Z
+UID:b6b22951-5a2b-49c0-8c84-418f8685df8a
+DTSTART:20210129T000000
+SUMMARY:Todays Word of the Day is: antagonistic - showing or feeling active
+  opposition or hostility towards someone or something
+END:VEVENT
+END:VCALENDAR
